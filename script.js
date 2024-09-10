@@ -58,7 +58,7 @@ class HashMap {
     // get index
     let index = this.hash(key);
 
-    // check if theres nothing att that index
+    // check if theres nothing at that index
     if (this.buckets[index] === undefined) return null;
 
     // else loop through nodes in that buckets (index's) LinkedList, check if the key matches
@@ -69,6 +69,22 @@ class HashMap {
       return null;
     }
   }
+
+  // Create has(key) returns true if key is in hashmap. otherwise false
+  has(key) {
+    // get index
+    let index = this.hash(key);
+
+    // check if theres nothing at that index
+    if (this.buckets[index] === undefined) return false;
+
+    for (let node = this.buckets[index].head(); node !== null; node.next) {
+      if (node.value.key === key) {
+        return true;
+      }
+      return false;
+    }
+  }
 }
 
 // Testing
@@ -77,9 +93,8 @@ test.set("apple", "red");
 test.set("banana", "yellow");
 test.set("carrot", "orange");
 test.set("dog", "brown");
-console.log(test.get("carrot"));
+console.log(test.has("apple"));
 
-// Create get(key) that returns the value assigned to that key, otherwise null
 // Create has(key) returns true if key is in hashmap. otherwise false
 // remove(key), if key exists in hashmap, remove entry and return true, if key doesnt exist return false
 // length() returns number of stored keys
