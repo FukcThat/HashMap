@@ -34,7 +34,7 @@ class HashMap {
       const newList = new LinkedList();
       this.buckets[index] = newList;
     }
-    // loop through all nodes in index's linkedList, check if key is passed in key
+    // loop through all nodes in index's linkedList, check if key is passed-key
     for (
       let node = this.buckets[index].head();
       node !== null;
@@ -52,15 +52,32 @@ class HashMap {
     // iterate element count
     this.elementCount++;
   }
+
+  // Create get(key) that returns the value assigned to that key, otherwise null
+  get(key) {
+    // get index
+    let index = this.hash(key);
+
+    // check if theres nothing att that index
+    if (this.buckets[index] === undefined) return null;
+
+    // else loop through nodes in that buckets (index's) LinkedList, check if the key matches
+    for (let node = this.buckets[index].head(); node !== null; node.next) {
+      if (node.value.key === key) {
+        return node.value.value;
+      }
+      return null;
+    }
+  }
 }
 
+// Testing
 const test = new HashMap(10);
 test.set("apple", "red");
 test.set("banana", "yellow");
 test.set("carrot", "orange");
 test.set("dog", "brown");
-
-console.log(test.buckets[1].head());
+console.log(test.get("carrot"));
 
 // Create get(key) that returns the value assigned to that key, otherwise null
 // Create has(key) returns true if key is in hashmap. otherwise false
