@@ -1,6 +1,67 @@
+import { LinkedList } from "./LinkedList/linkedList.js";
+import { Node } from "./LinkedList/node.js";
+
 // Create hashmap Class
-// Create hash(key) function (has function with key as input)
-// Create set(key, value) function avoid collisions using %16
+class HashMap {
+  constructor(capacity) {
+    this.buckets = Array(capacity);
+    this.elementCount = 0;
+  }
+
+  // Create hash(key) function (has function with key as input)
+  hash(key) {
+    let hash = 0;
+    const prime = 7;
+
+    key = key.toString();
+
+    for (let i = 0; i < key.length; i++) {
+      hash = prime * hash + key.charCodeAt(i);
+    }
+
+    hash = hash % this.buckets.length;
+    return hash;
+  }
+
+  // Create set(key, value) function
+  set(key, value) {
+    // get index
+    let index = this.hash(key);
+
+    // check if theres is nothing at that index
+    if (this.buckets[index] === undefined) {
+      // -> make a linkedList, set it to be at that index
+      const newList = new LinkedList();
+      this.buckets[index] = newList;
+    }
+    // loop through all nodes in index's linkedList, check if key is passed in key
+    for (
+      let node = this.buckets[index].head();
+      node !== null;
+      node = node.next
+    ) {
+      // -> update Value and return
+      if (node.value.key === key) {
+        node.value.value = value;
+        return;
+      }
+    }
+    // -> append key-value to linked list of that index
+    this.buckets[index].append({ key, value });
+
+    // iterate element count
+    this.elementCount++;
+  }
+}
+
+const test = new HashMap(10);
+test.set("apple", "red");
+test.set("banana", "yellow");
+test.set("carrot", "orange");
+test.set("dog", "brown");
+
+console.log(test.buckets[1].head());
+
 // Create get(key) that returns the value assigned to that key, otherwise null
 // Create has(key) returns true if key is in hashmap. otherwise false
 // remove(key), if key exists in hashmap, remove entry and return true, if key doesnt exist return false
@@ -9,5 +70,3 @@
 // keys() returns array containing all keys
 // values() returns array containing all the values
 // entries() returns array that contains each key-value pair
-
-console.log(5);
