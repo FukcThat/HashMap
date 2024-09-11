@@ -6,6 +6,7 @@ class HashMap {
   constructor(capacity) {
     this.buckets = Array(capacity);
     this.elementCount = 0;
+    this.initialCapacity = capacity;
   }
 
   // Create hash(key) function (has function with key as input)
@@ -62,7 +63,11 @@ class HashMap {
     if (this.buckets[index] === undefined) return null;
 
     // else loop through nodes in that buckets (index's) LinkedList, check if the key matches
-    for (let node = this.buckets[index].head(); node !== null; node.next) {
+    for (
+      let node = this.buckets[index].head();
+      node !== null;
+      node = node.next
+    ) {
       if (node.value.key === key) {
         return node.value.value;
       }
@@ -78,27 +83,97 @@ class HashMap {
     // check if theres nothing at that index
     if (this.buckets[index] === undefined) return false;
 
-    for (let node = this.buckets[index].head(); node !== null; node.next) {
+    for (
+      let node = this.buckets[index].head();
+      node !== null;
+      node = node.next
+    ) {
       if (node.value.key === key) {
         return true;
       }
-      return false;
     }
+    return false;
+  }
+
+  // remove(key), if key exists in hashmap, remove entry and return true, if key doesnt exist return false
+  remove(key) {
+    let index = this.hash(key);
+
+    if (this.buckets[index] === undefined) return false;
+
+    let indexCounter = 0;
+
+    for (
+      let node = this.buckets[index].head();
+      node !== null;
+      node = node.next
+    ) {
+      if (node.value.key === key) {
+        this.buckets[index].removeAt(indexCounter);
+        this.elementCount--;
+        return true;
+      }
+
+      indexCounter++;
+    }
+    return false;
+  }
+
+  // length() returns number of stored keys
+  length() {
+    return this.elementCount;
+  }
+
+  // clear() removes all entries in hashmap
+  clear() {
+    this.buckets = Array(this.initialCapacity);
+    this.elementCount = 0;
+  }
+
+  // keys() returns array containing all keys
+  keys() {
+    const allKeysArray = [];
+
+    this.buckets.forEach((bucket) => {
+      for (let node = bucket.head(); node !== null; node = node.next) {
+        allKeysArray.push(node.value.key);
+      }
+    });
+    return allKeysArray;
+  }
+
+  // values() returns array containing all the values
+  values() {
+    const allValuesArray = [];
+
+    this.buckets.forEach((bucket) => {
+      for (let node = bucket.head(); node !== null; node = node.next) {
+        allValuesArray.push(node.value.value);
+      }
+    });
+    return allValuesArray;
+  }
+
+  // entries() returns array that contains each key-value pair
+  entries() {
+    const allEntriesArray = [];
+
+    this.buckets.forEach((bucket) => {
+      for (let node = bucket.head(); node !== null; node = node.next) {
+        allEntriesArray.push({ key: node.value.key, value: node.value.value });
+      }
+    });
+    return allEntriesArray;
   }
 }
 
 // Testing
 const test = new HashMap(10);
+console.log(test.length());
 test.set("apple", "red");
 test.set("banana", "yellow");
+console.log(test.length());
 test.set("carrot", "orange");
+test.remove("apple");
 test.set("dog", "brown");
-console.log(test.has("apple"));
-
-// Create has(key) returns true if key is in hashmap. otherwise false
-// remove(key), if key exists in hashmap, remove entry and return true, if key doesnt exist return false
-// length() returns number of stored keys
-// clear() removes all entries in hashmap
-// keys() returns array containing all keys
-// values() returns array containing all the values
-// entries() returns array that contains each key-value pair
+console.log(test.entries()[0].key);
