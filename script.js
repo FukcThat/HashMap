@@ -5,8 +5,10 @@ import { Node } from "./LinkedList/node.js";
 class HashMap {
   constructor(capacity) {
     this.buckets = Array(capacity);
-    this.elementCount = 0;
     this.initialCapacity = capacity;
+    this.elementCount = 0;
+    this.loadFactor = 0.75;
+    this.loadIncreaseFactor = 2;
   }
 
   // Create hash(key) function (has function with key as input)
@@ -26,6 +28,9 @@ class HashMap {
 
   // Create set(key, value) function
   set(key, value) {
+    // resize
+    this.resize();
+
     // get index
     let index = this.hash(key);
 
@@ -47,11 +52,29 @@ class HashMap {
         return;
       }
     }
+
     // -> append key-value to linked list of that index
     this.buckets[index].append({ key, value });
 
     // iterate element count
     this.elementCount++;
+  }
+
+  resize() {
+    if (this.elementCount / this.buckets.length >= this.loadFactor) {
+      this.elementCount = 0;
+      const oldHashMapValues = this.entries();
+
+      this.buckets = Array(this.buckets.length * this.loadIncreaseFactor);
+
+      console.log(oldHashMapValues);
+
+      // forEach value in oldHashMapValues, feed into set() for resized "this.buckets"
+
+      oldHashMapValues.forEach((value) => {
+        this.set(value.key, value.value);
+      });
+    }
   }
 
   // Create get(key) that returns the value assigned to that key, otherwise null
@@ -71,7 +94,6 @@ class HashMap {
       if (node.value.key === key) {
         return node.value.value;
       }
-      return null;
     }
   }
 
@@ -168,12 +190,39 @@ class HashMap {
 }
 
 // Testing
-const test = new HashMap(10);
-console.log(test.length());
+const test = new HashMap(16);
+
 test.set("apple", "red");
 test.set("banana", "yellow");
-console.log(test.length());
 test.set("carrot", "orange");
-test.remove("apple");
 test.set("dog", "brown");
-console.log(test.entries()[0].key);
+test.set("elephant", "gray");
+test.set("frog", "green");
+test.set("grape", "purple");
+test.set("hat", "black");
+test.set("ice cream", "white");
+test.set("jacket", "blue");
+test.set("kite", "pink");
+test.set("lion", "golden");
+
+test.set("moon", "silver");
+
+console.log(test.get("moon"));
+test.set("moon", "ok");
+console.log(test.get("moon"));
+
+console.log(test.get("jacket"));
+test.set("jacket", "mh");
+console.log(test.get("jacket"));
+
+console.log(test.get("carrot"));
+test.set("carrot", "green");
+console.log(test.get("carrot"));
+
+console.log(test.entries());
+console.log(test.has("gitten"));
+console.log(test.has("jacket"));
+test.remove("jacket");
+console.log(test.has("jacket"));
+
+console.log("Filled Buckets:" + test.elementCount);
